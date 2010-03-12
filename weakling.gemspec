@@ -9,7 +9,6 @@ Gem::Specification.new do |s|
   s.email = ["headius@headius.com"]
   s.files = Dir['{lib,ext,examples,test}/**/*'] + Dir['{*.txt,*.gemspec,Rakefile}']
   s.homepage = "http://github.com/headius/weakling"
-  s.rdoc_options = ["--main", "README.txt"]
   s.require_paths = ["lib"]
   s.summary = "A modified WeakRef impl for JRuby plus some weakref-related tools"
   s.test_files = Dir["test/test*.rb"]
