@@ -16,7 +16,22 @@ reference types like soft and phantom references.
 Just require 'weakling'. It will require 'weakref' along with the refqueue JRuby
 extension and the weakling/collections library containing the weak id hash.
 
-== Example ==
+== RefQueue Example ==
+
+require 'weakling'
+require 'java'
+
+q = WeakRef::RefQueue.new
+wr = WeakRef.new(Object.new, q)
+puts "weakref object: #{wr.__id__}"
+
+puts "running GC"
+java.lang.System.gc
+
+puts "weakref alive?: #{wr.weakref_alive?}"
+puts "weakref object from queue: #{q.poll.__id__}"
+
+== WeakRef::IdHash Example ==
 
 require 'weakling'
  
