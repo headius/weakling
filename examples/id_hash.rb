@@ -15,7 +15,8 @@ puts "forcing GC"
 begin
   require 'java'
   java.lang.System.gc
-rescue
+rescue LoadError
+  # not on JRuby, use GC.start
   GC.start
 end
 
