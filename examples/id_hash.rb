@@ -21,4 +21,3 @@ end
 
 puts "all items in weak id hash:"
 ids.each {|i| puts "#{i} = #{wh[i]}"}
-puts "hash size: #{wh.hash.size}"

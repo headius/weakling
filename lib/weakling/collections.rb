@@ -2,8 +2,6 @@ require 'weakref'
 require 'refqueue'
 
 class WeakRef::IdHash
-  attr_accessor :hash
-
   def initialize
     @hash = Hash.new
     @queue = WeakRef::RefQueue.new
