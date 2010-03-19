@@ -11,6 +11,8 @@ This library provides:
 In the future it may provide additional features like a generic WeakHash or other
 reference types like soft and phantom references.
 
+The weakling repository is at http://github.com/headius/weakling.
+
 == Usage ==
 
 Just require 'weakling'. It will require 'weakref' along with the refqueue JRuby
