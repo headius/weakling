@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{weakling}
-  s.version = "0.0.2"
+  s.version = "0.0.3"
   s.authors = ["Charles Oliver Nutter"]
   s.date = Time.now.strftime('YYYY-MM-DD')
   s.description = "A modified WeakRef impl for JRuby plus some weakref-related tools"
