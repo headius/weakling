@@ -20,7 +20,7 @@ module Weakling
     def [](id)
       _cleanup
       if wr = @hash[id]
-        return wr.__getobj__ rescue nil
+        return wr.get rescue nil
       end
 
       return nil

@@ -10,6 +10,10 @@ describe Weakling::IdHash do
     ary = (1..10).to_a.map {Object.new}
     ids = ary.map {|o| @id_hash.add(o)}
 
+    ids.each do |id|
+      @id_hash[id].should_not == nil
+      ary.should include(@id_hash[id])
+    end
     ids.sort.should == ary.map(&:__id__).sort
     @id_hash.to_a.sort.should == ary.map{|obj| [obj.__id__, obj]}.sort
   end
