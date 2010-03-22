@@ -7,6 +7,7 @@ import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.RubyException;
 import org.jruby.RubyKernel;
+import org.jruby.RubyModule;
 import org.jruby.RubyObject;
 import org.jruby.anno.JRubyMethod;
 import org.jruby.anno.JRubyClass;
@@ -28,13 +29,15 @@ import org.jruby.runtime.load.Library;
  */
 public class RefQueueLibrary implements Library {
     public void load(Ruby runtime, boolean wrap) throws IOException {
+        // only used for RefError
         RubyKernel.require(runtime.getKernel(), runtime.newString("weakref"), Block.NULL_BLOCK);
 
-        RubyClass weakrefClass = (RubyClass)runtime.getClassFromPath("WeakRef");
+        RubyModule weaklingModule = runtime.getOrCreateModule("Weakling");
+        RubyClass weakrefClass = runtime.defineClassUnder("WeakRef", runtime.getObject(), WEAKREF_ALLOCATOR, weaklingModule);
         weakrefClass.setAllocator(WEAKREF_ALLOCATOR);
         weakrefClass.defineAnnotatedMethods(WeakRef.class);
 
-        RubyClass refQueueClass = runtime.defineClassUnder("RefQueue", runtime.getObject(), REFQUEUE_ALLOCATOR, weakrefClass);
+        RubyClass refQueueClass = runtime.defineClassUnder("RefQueue", runtime.getObject(), REFQUEUE_ALLOCATOR, weaklingModule);
         refQueueClass.defineAnnotatedMethods(RefQueue.class);
     }
     
@@ -117,8 +120,8 @@ public class RefQueueLibrary implements Library {
             super(runtime, klazz);
         }
 
-        @JRubyMethod(name = "__getobj__")
-        public IRubyObject getobj() {
+        @JRubyMethod(name = "get")
+        public IRubyObject get() {
             IRubyObject obj = ref.get();
 
             if (obj == null) {
@@ -129,27 +132,11 @@ public class RefQueueLibrary implements Library {
             return obj;
         }
 
-        @JRubyMethod(name = "__setobj__")
-        public IRubyObject setobj(IRubyObject obj) {
-	        return getRuntime().getNil();
-	    }
-
-        // This is only here to replace the "new" in JRuby's weakref, which
-        // doesn't really need to be there.
-        @JRubyMethod(name = "new", required = 1, optional = 1, meta = true)
-        public static IRubyObject newInstance(IRubyObject clazz, IRubyObject[] args) {
-            WeakRef weakRef = (WeakRef)((RubyClass)clazz).allocate();
-
-            weakRef.callInit(args, Block.NULL_BLOCK);
-
-            return weakRef;
-        }
-
         @JRubyMethod(name = "initialize", frame = true, visibility = Visibility.PRIVATE)
         public IRubyObject initialize(ThreadContext context, IRubyObject obj) {
             ref = new RubyWeakReference(obj, this);
 
-            return RuntimeHelpers.invokeSuper(context, this, obj, Block.NULL_BLOCK);
+            return context.getRuntime().getNil();
         }
 
         @JRubyMethod(name = "initialize", frame = true, visibility = Visibility.PRIVATE)
@@ -159,7 +146,7 @@ public class RefQueueLibrary implements Library {
             }
             ref = new RubyWeakReference(obj, this, ((RefQueue)queue).getQueue());
 
-            return RuntimeHelpers.invokeSuper(context, this, obj, Block.NULL_BLOCK);
+            return context.getRuntime().getNil();
         }
 
         @JRubyMethod(name = "weakref_alive?")

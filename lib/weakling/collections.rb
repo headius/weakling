@@ -1,41 +1,48 @@
-require 'weakref'
 require 'refqueue'
 
-class WeakRef::IdHash
-  def initialize
-    @hash = Hash.new
-    @queue = WeakRef::RefQueue.new
-  end
-
-  class IdWeakRef < WeakRef
-    attr_accessor :id
-    def initialize(obj, queue)
-      super(obj, queue)
-      @id = obj.__id__
-    end
-  end
-
-  def [](id)
-    _cleanup
-    if wr = @hash[id]
-      return wr.__getobj__ rescue nil
+module Weakling
+  class IdHash
+    include Enumerable
+    
+    def initialize
+      @hash = Hash.new
+      @queue = Weakling::RefQueue.new
     end
 
-    return nil
-  end
+    class IdWeakRef < Weakling::WeakRef
+      attr_accessor :id
+      def initialize(obj, queue)
+        super(obj, queue)
+        @id = obj.__id__
+      end
+    end
 
-  def add(object)
-    _cleanup
-    wr = IdWeakRef.new(object, @queue)
+    def [](id)
+      _cleanup
+      if wr = @hash[id]
+        return wr.__getobj__ rescue nil
+      end
 
-    @hash[wr.id] = wr
+      return nil
+    end
 
-    return wr.id
-  end
+    def add(object)
+      _cleanup
+      wr = IdWeakRef.new(object, @queue)
 
-  def _cleanup
-    while ref = @queue.poll
-      @hash.delete(ref.id)
+      @hash[wr.id] = wr
+
+      return wr.id
+    end
+
+    def _cleanup
+      while ref = @queue.poll
+        @hash.delete(ref.id)
+      end
+    end
+
+    def each
+      @hash.each {|id, wr| obj = wr.get rescue nil; yield [id,obj] if obj}
     end
   end
 end
