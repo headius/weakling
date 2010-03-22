@@ -1,3 +1,4 @@
 pkg
 weakling-*.gem
 lib/refqueue.jar
+nbproject/private
