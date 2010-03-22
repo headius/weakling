@@ -9,7 +9,9 @@
                 <root id="lib.dir"/>
                 <root id="examples.dir"/>
             </source-roots>
-            <test-roots/>
+            <test-roots>
+                <root id="test.spec.dir"/>
+            </test-roots>
         </data>
     </configuration>
 </project>

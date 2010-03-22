@@ -21,3 +21,8 @@ task :jar => :compile do
 end
  
 task :package => :jar
+
+desc "Run the specs"
+task :spec => :jar do
+  ruby "-S", "spec", "spec"
+end
